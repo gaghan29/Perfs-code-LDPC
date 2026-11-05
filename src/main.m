@@ -4,7 +4,7 @@ clear;
 
 disp('debut tp')
 
-nit = 50;
+nit = 2;
 
 H = [[1 0 1 0 0 0]
     [0 1 0 1 1 0]
@@ -27,7 +27,7 @@ end
 
 v2p = p2v;
 
-Lx = [-1,1,2,-1,1,-1];
+Lx = [-1,1,2,-1, 1,-1];
 
 disp(v2p)
 disp(p2v)
@@ -37,7 +37,7 @@ for j = 1:nit
     % Mise à jour de la matrice de noeuds de variable vers noeuds de parité
     for k = 1:s(2)
         for h = 1:s(1)
-            if ~isnan(v2p(h,k))
+            if H(h,k) == 1
                 v2p(h,k) = Lx(k);
                 for i = 1:s(1)
                     if (H(i,k) == 1) && (i ~= h) 
@@ -48,10 +48,10 @@ for j = 1:nit
         end    
     end
     
-    % Mise à jour de la matrice de noeuds de parité vers noeuds de parité
+    % Mise à jour de la matrice de noeuds de parité vers noeuds de variable
     for a = 1:s(1)
         for b = 1:s(2)
-            if ~isnan(p2v(a,b))
+            if H(a,b) == 1
                 produit = 1;
                 for i = 1:s(2)
                     if (H(a,i) == 1) && (i ~= b)
@@ -62,13 +62,16 @@ for j = 1:nit
             end
         end
     end
-              
-    %disp('fin tp')
-    if  j == nit/2
-        disp(v2p)
-        disp(p2v)
-    end
+    disp(v2p)
+    disp(p2v)
 end
 
-disp(v2p)
-disp(p2v)
+Lpost = Lx;
+for k = 1:s(2)
+    for i = 1:s(1)
+        if H(i,k) == 1
+            Lpost(k) = Lpost(k) + p2v(i,k);
+        end
+    end
+end
+xhat = Lpost < 0;
